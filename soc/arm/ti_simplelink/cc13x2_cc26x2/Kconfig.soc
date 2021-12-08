@@ -13,6 +13,8 @@ config SOC_CC2652R
 config SOC_CC1352R
 	bool "CC1352R"
 
+config SOC_CC1352P
+	bool "CC1352P"
 endchoice
 
 menu "Customer Configuration (CCFG)"

@@ -1018,7 +1018,7 @@ int ull_conn_rx(memq_link_t *link, struct node_rx_pdu **rx)
 	if (!conn) {
 		/* Mark for buffer for release */
 		(*rx)->hdr.type = NODE_RX_TYPE_RELEASE;
-
+		BT_DBG("!conn");
 		return 0;
 	}
 
@@ -6569,11 +6569,13 @@ static inline int ctrl_rx(memq_link_t *link, struct node_rx_pdu **rx,
 
 #if defined(CONFIG_BT_PERIPHERAL)
 	case PDU_DATA_LLCTRL_TYPE_FEATURE_REQ:
+		BT_DBG("Received PDU_DATA_LLCTRL_TYPE_FEATURE_REQ");
 		if (!conn->lll.role ||
 		    PDU_DATA_LLCTRL_LEN(feature_req) != pdu_rx->len) {
 			goto ull_conn_rx_unknown_rsp_send;
 		}
 
+		BT_DBG("Queueing up PDU_DATA_LLCTRL_TYPE_FEATURE_RSP");
 		nack = feature_rsp_send(conn, *rx, pdu_rx);
 		break;
 #endif /* CONFIG_BT_PERIPHERAL */

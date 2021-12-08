@@ -3,6 +3,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+#ifndef __LLL_CONN_H_
+#define __LLL_CONN_H_
+
 #if defined(CONFIG_BT_CTLR_CONN_META)
 #include "lll_conn_meta.h"
 #endif /* CONFIG_BT_CTLR_CONN_META */
@@ -168,3 +171,5 @@ uint8_t lll_conn_force_md_cnt_set(uint8_t force_md_cnt);
 
 extern void ull_conn_lll_ack_enqueue(uint16_t handle, struct node_tx *tx);
 extern uint16_t ull_conn_lll_max_tx_octets_get(struct lll_conn *lll);
+
+#endif

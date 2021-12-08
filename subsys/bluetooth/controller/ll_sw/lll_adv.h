@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include "lll_adv_types.h"
+#include "lll_conn.h"
+
 struct lll_adv_iso_stream {
 	uint8_t big_handle;
 

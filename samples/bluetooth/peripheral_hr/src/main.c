@@ -107,6 +107,8 @@ void main(void)
 {
 	int err;
 
+	printk("Starting peripheral_hr Demo\n");
+
 	err = bt_enable(NULL);
 	if (err) {
 		printk("Bluetooth init failed (err %d)\n", err);

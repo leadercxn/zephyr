@@ -1,0 +1,24 @@
+# BeagleConnect Freedom board configuration
+
+# Copyright (c) 2020 Erik Larson
+# Copyright (c) 2020 Jason Kridner, BeagleBoard.org Foundation
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_BEAGLECONNECT_FREEDOM
+
+config BOARD
+	default "beagleconnect_freedom"
+
+
+#config BT_CTLR
+#	default y
+#	select BLE_VENDOR_LLL_TI
+#	select BLE_CC13XX_CC26XX
+#	select ENTROPY_CC13XX_CC26XX_RNG
+
+# To debug the BLE radio using GPIO, uncomment the line below
+# See the file subsys/bluetooth/controller/ll_sw/ti/hal/cc13xx_cc26xx/debug.h
+# for details
+#	select BT_CTLR_DEBUG_PINS
+
+endif # BOARD_BEAGLECONNECT_FREEDOM

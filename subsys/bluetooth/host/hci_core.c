@@ -2439,6 +2439,7 @@ static void hci_tx_thread(void *p1, void *p2, void *p3)
 		BT_DBG("Calling k_poll with %d events", ev_count);
 
 		err = k_poll(events, ev_count, K_FOREVER);
+		BT_DBG("err = %d", err);
 		BT_ASSERT(err == 0);
 
 		process_events(events, ev_count);
@@ -2618,6 +2619,7 @@ static int common_init(void)
 
 	if (!(bt_dev.drv->quirks & BT_QUIRK_NO_RESET)) {
 		/* Send HCI_RESET */
+		BT_DBG("Send HCI_RESET");
 		err = bt_hci_cmd_send_sync(BT_HCI_OP_RESET, NULL, &rsp);
 		if (err) {
 			return err;
@@ -2625,6 +2627,7 @@ static int common_init(void)
 		hci_reset_complete(rsp);
 		net_buf_unref(rsp);
 	}
+	BT_DBG("Send HCI_RESET DONE");
 
 	/* Read Local Supported Features */
 	err = bt_hci_cmd_send_sync(BT_HCI_OP_READ_LOCAL_FEATURES, NULL, &rsp);
@@ -3128,7 +3131,7 @@ static const char *vs_hw_platform(uint16_t platform)
 {
 	static const char * const plat_str[] = {
 		"reserved", "Intel Corporation", "Nordic Semiconductor",
-		"NXP Semiconductors" };
+		"NXP Semiconductors", "Texas Instruments"};
 
 	if (platform < ARRAY_SIZE(plat_str)) {
 		return plat_str[platform];
@@ -3143,12 +3146,18 @@ static const char *vs_hw_variant(uint16_t platform, uint16_t variant)
 		"reserved", "nRF51x", "nRF52x", "nRF53x"
 	};
 
-	if (platform != BT_HCI_VS_HW_PLAT_NORDIC) {
-		return "unknown";
+	static const char * const ti_str[] = {
+		"reserved", "cc13xx_cc26xx"
+	};
+
+	if (platform == BT_HCI_VS_HW_PLAT_NORDIC
+		&& variant < ARRAY_SIZE(nordic_str)) {
+		return nordic_str[variant];
 	}
 
-	if (variant < ARRAY_SIZE(nordic_str)) {
-		return nordic_str[variant];
+	if (platform == BT_HCI_VS_HW_PLAT_TI
+		&& variant < ARRAY_SIZE(ti_str)) {
+		return ti_str[variant];
 	}
 
 	return "unknown";
@@ -3586,6 +3595,7 @@ int bt_enable(bt_ready_cb_t cb)
 			K_PRIO_COOP(CONFIG_BT_HCI_TX_PRIO),
 			0, K_NO_WAIT);
 	k_thread_name_set(&tx_thread_data, "BT TX");
+	BT_DBG("BT TX thread create success");
 
 #if !defined(CONFIG_BT_RECV_IS_RX_THREAD)
 	/* RX thread */
@@ -3595,6 +3605,7 @@ int bt_enable(bt_ready_cb_t cb)
 			K_PRIO_COOP(CONFIG_BT_RX_PRIO),
 			0, K_NO_WAIT);
 	k_thread_name_set(&rx_thread_data, "BT RX");
+	BT_DBG("BT RX thread create success");
 #endif
 
 	if (IS_ENABLED(CONFIG_BT_TINYCRYPT_ECC)) {
