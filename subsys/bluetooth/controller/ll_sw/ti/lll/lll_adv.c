@@ -96,8 +96,9 @@ static inline bool isr_rx_ci_adva_check(struct pdu_adv *adv,
 #define BT_CTLR_ADV_SYNC_SET 0
 #endif
 
-#define PDU_MEM_SIZE       MROUND(PDU_AC_LL_HEADER_SIZE + \
-				  PDU_AC_PAYLOAD_SIZE_MAX)
+/* Different hardware platform is different, the value of PDU_MEM_SIZE is different ,if PDU_MEM_SIZE too lagre, there will occour reset bug */
+#define PDU_MEM_SIZE       32
+
 #define PDU_MEM_COUNT_MIN  (BT_CTLR_ADV_SET + \
 			    (BT_CTLR_ADV_SET * PAYLOAD_FRAG_COUNT) + \
 			    (BT_CTLR_ADV_AUX_SET * PAYLOAD_FRAG_COUNT) + \
@@ -124,7 +125,6 @@ static struct k_sem sem_pdu_free;
 int lll_adv_init(void)
 {
 	int err;
-
 	err = init_reset();
 	if (err) {
 		return err;
@@ -136,7 +136,6 @@ int lll_adv_init(void)
 int lll_adv_reset(void)
 {
 	int err;
-
 	err = init_reset();
 	if (err) {
 		return err;
@@ -311,6 +310,19 @@ void lll_adv_prepare(void *param)
 
 static int init_reset(void)
 {
+	BT_DBG("init_reset ready to mem_init PDU_MEM_SIZE = %d",PDU_MEM_SIZE);
+
+	/* Initialize AC PDU pool */
+	mem_init(mem_pdu.pool, PDU_MEM_SIZE,
+		 (sizeof(mem_pdu.pool) / PDU_MEM_SIZE), &mem_pdu.free);
+
+	/* Initialize AC PDU free buffer return queue */
+	MFIFO_INIT(pdu_free);
+
+	/* It is necessary to log for some delay */
+	BT_DBG("init_reset mem_init done");
+
+	k_sem_init(&sem_pdu_free, 0, PDU_MEM_FIFO_COUNT);
 	return 0;
 }
 

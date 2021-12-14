@@ -691,7 +691,7 @@ static int hci_driver_open(void)
 			K_PRIO_COOP(CONFIG_BT_RX_PRIO), 0, K_NO_WAIT);
 	k_thread_name_set(&recv_thread_data, "BT RX");
 
-	BT_DBG("Success.");
+	BT_DBG("hci_driver_open Success.");
 
 	return 0;
 }

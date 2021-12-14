@@ -534,8 +534,8 @@ int ll_init(struct k_sem *sem_rx)
 	if (err) {
 		return err;
 	}
-
 #if defined(CONFIG_BT_BROADCASTER)
+	BT_DBG("lll_adv_init ready");
 	err = lll_adv_init();
 	if (err) {
 		return err;
@@ -545,6 +545,7 @@ int ll_init(struct k_sem *sem_rx)
 	if (err) {
 		return err;
 	}
+	BT_DBG("ull_adv_init done");
 #endif /* CONFIG_BT_BROADCASTER */
 
 #if defined(CONFIG_BT_OBSERVER)
@@ -654,7 +655,6 @@ int ll_init(struct k_sem *sem_rx)
 #if defined(CONFIG_BT_CTLR_TEST)
 	lll_chan_sel_2_ut();
 #endif /* CONFIG_BT_CTLR_TEST */
-
 	return  0;
 }
 

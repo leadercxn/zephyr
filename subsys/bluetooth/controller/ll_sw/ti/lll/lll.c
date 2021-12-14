@@ -227,6 +227,7 @@ int lll_init(void)
 
 	/* Call it after IRQ enable to be able to measure ISR latency */
 	radio_setup();
+
 	return 0;
 }
 

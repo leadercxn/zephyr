@@ -2047,6 +2047,7 @@ uint8_t ull_adv_time_update(struct ll_adv_set *adv, struct pdu_adv *pdu,
 
 static int init_reset(void)
 {
+	int err = 0;
 	uint8_t handle;
 
 #if defined(CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL) && \
@@ -2055,8 +2056,17 @@ static int init_reset(void)
 #endif /* CONFIG_BT_CTLR_TX_PWR_DYNAMIC_CONTROL && !CONFIG_BT_CTLR_ADV_EXT */
 
 	for (handle = 0U; handle < BT_CTLR_ADV_SET; handle++) {
-		lll_adv_data_init(&ll_adv[handle].lll.adv_data);
-		lll_adv_data_init(&ll_adv[handle].lll.scan_rsp);
+		err = lll_adv_data_init(&ll_adv[handle].lll.adv_data);
+		if(err != 0)
+		{
+			BT_WARN("lll_adv_data_init adv_data error %d",err);
+		}
+		err = lll_adv_data_init(&ll_adv[handle].lll.scan_rsp);
+		if(err != 0)
+		{
+			BT_WARN("lll_adv_data_init scan_rsp error %d",err);
+		}
+
 #if defined(CONFIG_BT_CTLR_DF_ADV_CTE_TX)
 		/* Pointer to DF configuration must be cleared on reset. In other case it will point
 		 * to a memory pool address that should be released. It may be used by the pool

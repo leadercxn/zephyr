@@ -160,7 +160,6 @@ elseif(CONFIG_SOC_OPENISA_RV32M1_RISCV32)
   include(ll_sw/openisa.cmake)
 elseif(CONFIG_SOC_FAMILY_TISIMPLELINK)
   include(ll_sw/ti.cmake)
-  message(STATUS "*******CHOOSE ll_sw/ti.cmake")  #log
 endif()
 
 zephyr_library_sources_ifdef(
