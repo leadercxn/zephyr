@@ -2368,14 +2368,11 @@ static void process_events(struct k_poll_event *ev, int count)
 	BT_DBG("count %d", count);
 
 	for (; count; ev++, count--) {
-		BT_DBG("ev->state %u", ev->state);
 
 		switch (ev->state) {
 		case K_POLL_STATE_SIGNALED:
-			BT_DBG("ev->state = K_POLL_STATE_SIGNALED");
 			break;
 		case K_POLL_STATE_FIFO_DATA_AVAILABLE:
-			BT_DBG("ev->state = K_POLL_STATE_FIFO_DATA_AVAILABLE");
 			if (ev->tag == BT_EVENT_CMD_TX) {
 				send_cmd();
 			} else if (IS_ENABLED(CONFIG_BT_CONN) ||
@@ -2391,7 +2388,6 @@ static void process_events(struct k_poll_event *ev, int count)
 			}
 			break;
 		case K_POLL_STATE_NOT_READY:
-			BT_DBG("ev->state = K_POLL_STATE_NOT_READY");
 			break;
 		default:
 			BT_WARN("Unexpected k_poll event state %u", ev->state);

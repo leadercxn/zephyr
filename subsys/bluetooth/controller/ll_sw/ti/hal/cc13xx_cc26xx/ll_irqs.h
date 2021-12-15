@@ -7,7 +7,7 @@
 #include <inc/hw_ints.h>
 
 /* for HAL_SWI_RADIO_IRQ */
-#define LL_SWI4_IRQn (INT_I2C_IRQ - 16)
+#define LL_SWI4_IRQn (INT_I2C_IRQ - 9)
 /* for HAL_SWI_JOB_IRQ */
 #define LL_SWI5_IRQn (INT_AUX_SWEV1 - 16)
 

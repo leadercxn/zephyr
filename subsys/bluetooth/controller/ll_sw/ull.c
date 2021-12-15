@@ -778,6 +778,7 @@ void ll_reset(void)
 		LL_ASSERT(!retval);
 
 #if !defined(CONFIG_BT_CTLR_ZLI)
+		BT_DBG("k_sem_take sem");
 		/* LLL reset must complete before returning - wait for
 		 * reset completion in LLL mayfly thread
 		 */
@@ -786,6 +787,7 @@ void ll_reset(void)
 	}
 
 #if defined(CONFIG_BT_BROADCASTER)
+	BT_DBG("ull_adv_reset_finalize ready");
 	/* Finalize after adv state LLL context reset */
 	err = ull_adv_reset_finalize();
 	LL_ASSERT(!err);
