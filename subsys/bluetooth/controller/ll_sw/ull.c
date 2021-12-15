@@ -671,11 +671,12 @@ void ll_reset(void)
 	 *   sections.
 	 * - Initialize ULL context variable, similar to on-power-up.
 	 */
-
+	BT_DBG("ll_reset enter");
 #if defined(CONFIG_BT_BROADCASTER)
 	/* Reset adv state */
 	err = ull_adv_reset();
 	LL_ASSERT(!err);
+	BT_DBG("ull_adv_reset done");
 #endif /* CONFIG_BT_BROADCASTER */
 
 #if defined(CONFIG_BT_OBSERVER)
@@ -723,7 +724,9 @@ void ll_reset(void)
 
 #if defined(CONFIG_BT_CONN)
 	/* Reset conn role */
+	BT_DBG("ull_conn_reset ready");
 	err = ull_conn_reset();
+	BT_DBG("ull_conn_reset done err = %d",err);
 	LL_ASSERT(!err);
 
 	MFIFO_INIT(tx_ack);
@@ -732,6 +735,7 @@ void ll_reset(void)
 	/* reset filter accept list and resolving list */
 	if (IS_ENABLED(CONFIG_BT_CTLR_FILTER_ACCEPT_LIST)) {
 		ull_filter_reset(false);
+		BT_DBG("ull_filter_reset done");
 	}
 
 	/* Re-initialize ULL internals */
@@ -785,6 +789,7 @@ void ll_reset(void)
 	/* Finalize after adv state LLL context reset */
 	err = ull_adv_reset_finalize();
 	LL_ASSERT(!err);
+	BT_DBG("ull_adv_reset_finalize done");
 #endif /* CONFIG_BT_BROADCASTER */
 
 	/* Reset/End DTM Tx or Rx commands */
@@ -798,6 +803,7 @@ void ll_reset(void)
 	/* Common to init and reset */
 	err = init_reset();
 	LL_ASSERT(!err);
+	BT_DBG("init_reset done");
 
 #if defined(CONFIG_BT_CTLR_DF)
 	/* Direction Finding has to be reset after ull init_reset call because
@@ -1629,12 +1635,14 @@ void ull_ticker_status_give(uint32_t status, void *param)
 {
 	*((uint32_t volatile *)param) = status;
 
+	BT_DBG("ull_ticker_status_give k_sem_give ready");
 	k_sem_give(&sem_ticker_api_cb);
 }
 
 uint32_t ull_ticker_status_take(uint32_t ret, uint32_t volatile *ret_cb)
 {
 	if (ret == TICKER_STATUS_BUSY) {
+		BT_DBG("ull_ticker_status_take TICKER_STATUS_BUSY");
 		/* TODO: Enable ticker job in case of CONFIG_BT_CTLR_LOW_LAT */
 	} else {
 		/* Check for ticker operation enqueue failed, in which case
@@ -1649,7 +1657,9 @@ uint32_t ull_ticker_status_take(uint32_t ret, uint32_t volatile *ret_cb)
 			  (*ret_cb != TICKER_STATUS_BUSY));
 	}
 
+	BT_DBG("ull_ticker_status_take k_sem_take ready");
 	k_sem_take(&sem_ticker_api_cb, K_FOREVER);
+	BT_DBG("ull_ticker_status_take k_sem_take done");
 
 	return *ret_cb;
 }
@@ -1685,16 +1695,23 @@ int ull_ticker_stop_with_mark(uint8_t ticker_handle, void *param,
 	uint32_t ret;
 	void *mark;
 
+	BT_DBG("ull_ticker_stop_with_mark enter");
+
 	mark = ull_disable_mark(param);
 	if (mark != param) {
 		return -ENOLCK;
 	}
 
+	BT_DBG("ull_ticker_stop_with_mark ull_disable_mark done");
+
 	ret_cb = TICKER_STATUS_BUSY;
 	ret = ticker_stop(TICKER_INSTANCE_ID_CTLR, TICKER_USER_ID_THREAD,
 			  ticker_handle, ull_ticker_status_give,
 			  (void *)&ret_cb);
+	BT_DBG("ull_ticker_stop_with_mark ticker_stop done ,ret = %d",ret);
+
 	ret = ull_ticker_status_take(ret, &ret_cb);
+	BT_DBG("ull_ticker_stop_with_mark ull_ticker_status_take done ,ret = %d",ret);
 	if (ret) {
 		mark = ull_disable_unmark(param);
 		if (mark != param) {
@@ -1705,6 +1722,7 @@ int ull_ticker_stop_with_mark(uint8_t ticker_handle, void *param,
 	}
 
 	ret = ull_disable(lll_disable);
+	BT_DBG("ull_ticker_stop_with_mark ull_disable done ,ret = %d",ret);
 	if (ret) {
 		return -EBUSY;
 	}

@@ -916,7 +916,7 @@ static void ble_cc13xx_cc26xx_data_init(void)
 	/* BT_ADDR_SET_STATIC(a) */
 	mac[5] |= 0xc0;
 	drv_data->cmd_ble_adv_param.pDeviceAddress = (uint16_t *)mac;
-	BT_DBG("device address: %02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1],
+	BT_INFO("device address: %02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1],
 	       mac[2], mac[3], mac[4], mac[5]);
 	/* Ensure that this address is marked as _random_ */
 	drv_data->cmd_ble_adv_param.advConfig.deviceAddrType = 1;

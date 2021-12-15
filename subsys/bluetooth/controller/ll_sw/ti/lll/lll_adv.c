@@ -310,7 +310,7 @@ void lll_adv_prepare(void *param)
 
 static int init_reset(void)
 {
-	BT_DBG("init_reset ready to mem_init PDU_MEM_SIZE = %d",PDU_MEM_SIZE);
+	BT_INFO("init_reset ready to mem_init PDU_MEM_SIZE = %d",PDU_MEM_SIZE);
 
 	/* Initialize AC PDU pool */
 	mem_init(mem_pdu.pool, PDU_MEM_SIZE,

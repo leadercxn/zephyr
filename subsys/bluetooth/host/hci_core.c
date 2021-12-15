@@ -2372,8 +2372,10 @@ static void process_events(struct k_poll_event *ev, int count)
 
 		switch (ev->state) {
 		case K_POLL_STATE_SIGNALED:
+			BT_DBG("ev->state = K_POLL_STATE_SIGNALED");
 			break;
 		case K_POLL_STATE_FIFO_DATA_AVAILABLE:
+			BT_DBG("ev->state = K_POLL_STATE_FIFO_DATA_AVAILABLE");
 			if (ev->tag == BT_EVENT_CMD_TX) {
 				send_cmd();
 			} else if (IS_ENABLED(CONFIG_BT_CONN) ||
@@ -2389,6 +2391,7 @@ static void process_events(struct k_poll_event *ev, int count)
 			}
 			break;
 		case K_POLL_STATE_NOT_READY:
+			BT_DBG("ev->state = K_POLL_STATE_NOT_READY");
 			break;
 		default:
 			BT_WARN("Unexpected k_poll event state %u", ev->state);
@@ -2424,8 +2427,6 @@ static void hci_tx_thread(void *p1, void *p2, void *p3)
 						BT_EVENT_CMD_TX),
 	};
 
-	BT_DBG("Started");
-
 	while (1) {
 		int ev_count, err;
 
@@ -2436,14 +2437,15 @@ static void hci_tx_thread(void *p1, void *p2, void *p3)
 			ev_count += bt_conn_prepare_events(&events[1]);
 		}
 
-		BT_DBG("Calling k_poll with %d events", ev_count);
+		BT_INFO("Calling k_poll with %d events", ev_count);
 
 		err = k_poll(events, ev_count, K_FOREVER);
-		BT_DBG("err = %d", err);
+		BT_INFO("hci_tx_thread k_poll err = %d", err);
 		BT_ASSERT(err == 0);
 
+		BT_DBG("process_events ready");
 		process_events(events, ev_count);
-
+		BT_DBG("process_events done");
 		/* Make sure we don't hog the CPU if there's all the time
 		 * some ready events.
 		 */

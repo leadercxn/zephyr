@@ -239,13 +239,13 @@ static int sys_clock_driver_init(const struct device *dev)
 
 	initDevice();
 	startDevice();
-
+#if 0
 	/* Enable RTC interrupt. */
 	IRQ_CONNECT(DT_INST_IRQN(0),
 		DT_INST_IRQ(0, priority),
 		rtc_isr, 0, 0);
 	irq_enable(DT_INST_IRQN(0));
-
+#endif
 	return 0;
 }
 

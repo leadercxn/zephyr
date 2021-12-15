@@ -206,7 +206,7 @@ int lll_init(void)
 	/* Connect ISRs */
 	/* LL_RADIO_IRQn connected in DPL under hal/ti */
 	IRQ_CONNECT(LL_RADIO_IRQn, CONFIG_BT_CTLR_LLL_PRIO, isr_radio, NULL, 0);
-//	IRQ_CONNECT(LL_RTC0_IRQn,  CONFIG_BT_CTLR_ULL_HIGH_PRIO,rtc0_cc13xx_cc26xx_isr, NULL, 0);
+	IRQ_CONNECT(LL_RTC0_IRQn,  CONFIG_BT_CTLR_ULL_HIGH_PRIO,rtc0_cc13xx_cc26xx_isr, NULL, 0);
 //	IRQ_CONNECT(HAL_SWI_RADIO_IRQ, CONFIG_BT_CTLR_LLL_PRIO,swi_lll_cc13xx_cc26xx_isr, NULL, 0);
 #endif
 

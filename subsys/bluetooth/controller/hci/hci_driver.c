@@ -645,12 +645,15 @@ static int hci_driver_send(struct net_buf *buf)
 		break;
 #endif /* CONFIG_BT_CONN */
 	case BT_BUF_CMD:
+		BT_DBG("hci_driver_send type BT_BUF_CMD");
 		err = cmd_handle(buf);
 		break;
 	default:
 		BT_ERR("Unknown HCI type %u", type);
 		return -EINVAL;
 	}
+
+	BT_DBG("hci_driver_send err = %d",err);
 
 	if (!err) {
 		net_buf_unref(buf);

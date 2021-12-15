@@ -381,6 +381,7 @@ static void set_event_mask_page_2(struct net_buf *buf, struct net_buf **evt)
 
 static void reset(struct net_buf *buf, struct net_buf **evt)
 {
+	BT_DBG("reset enter");
 #if defined(CONFIG_BT_HCI_MESH_EXT)
 	int i;
 
@@ -403,6 +404,7 @@ static void reset(struct net_buf *buf, struct net_buf **evt)
 	le_event_mask = DEFAULT_LE_EVENT_MASK;
 
 	if (buf) {
+		BT_DBG("reset ll_reset ready");
 		ll_reset();
 		*evt = cmd_complete_status(0x00);
 	}
@@ -622,21 +624,26 @@ static void read_tx_power_level(struct net_buf *buf, struct net_buf **evt)
 static int ctrl_bb_cmd_handle(uint16_t  ocf, struct net_buf *cmd,
 			      struct net_buf **evt)
 {
+	BT_DBG("ctrl_bb_cmd_handle enter, ocf = %d", ocf);
 	switch (ocf) {
 	case BT_OCF(BT_HCI_OP_SET_EVENT_MASK):
+		BT_DBG("ctrl_bb_cmd_handle set_event_mask");
 		set_event_mask(cmd, evt);
 		break;
 
 	case BT_OCF(BT_HCI_OP_RESET):
+		BT_DBG("ctrl_bb_cmd_handle reset");
 		reset(cmd, evt);
 		break;
 
 	case BT_OCF(BT_HCI_OP_SET_EVENT_MASK_PAGE_2):
+		BT_DBG("ctrl_bb_cmd_handle set_event_mask_page_2");
 		set_event_mask_page_2(cmd, evt);
 		break;
 
 #if defined(CONFIG_BT_CONN)
 	case BT_OCF(BT_HCI_OP_READ_TX_POWER_LEVEL):
+		BT_DBG("ctrl_bb_cmd_handle read_tx_power_level");
 		read_tx_power_level(cmd, evt);
 		break;
 #endif /* CONFIG_BT_CONN */
@@ -4706,11 +4713,14 @@ struct net_buf *hci_cmd_handle(struct net_buf *cmd, void **node_rx)
 
 	ocf = BT_OCF(_opcode);
 
+	BT_DBG("hci_cmd_handle _opcode = %d , ocf = %d  BT_OGF(_opcode) = %d",_opcode,ocf,BT_OGF(_opcode));
+
 	switch (BT_OGF(_opcode)) {
 	case BT_OGF_LINK_CTRL:
 		err = link_control_cmd_handle(ocf, cmd, &evt);
 		break;
 	case BT_OGF_BASEBAND:
+		BT_DBG("hci_cmd_handle cmd BT_OGF_BASEBAND, ctrl_bb_cmd_handle");
 		err = ctrl_bb_cmd_handle(ocf, cmd, &evt);
 		break;
 	case BT_OGF_INFO:
@@ -4731,6 +4741,8 @@ struct net_buf *hci_cmd_handle(struct net_buf *cmd, void **node_rx)
 		err = -EINVAL;
 		break;
 	}
+
+	BT_DBG("hci_cmd_handle err = %d",err);
 
 	if (err == -EINVAL) {
 		evt = cmd_status(BT_HCI_ERR_UNKNOWN_CMD);

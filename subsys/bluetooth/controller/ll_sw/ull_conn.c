@@ -904,9 +904,11 @@ int ull_conn_reset(void)
 #endif /* CONFIG_BT_CENTRAL */
 
 	for (handle = 0U; handle < CONFIG_BT_MAX_CONN; handle++) {
+		BT_DBG("disable handle %d",handle);
 		disable(handle);
 	}
 
+	BT_DBG("ull_conn_reset MFIFO_INIT ready");
 	/* Re-initialize the Tx mfifo */
 	MFIFO_INIT(conn_tx);
 
@@ -2049,6 +2051,7 @@ uint16_t ull_conn_lll_max_tx_octets_get(struct lll_conn *lll)
 
 static int init_reset(void)
 {
+	BT_DBG("init_reset enter");
 	/* Initialize conn pool. */
 	mem_init(conn_pool, sizeof(struct ll_conn),
 		 sizeof(conn_pool) / sizeof(struct ll_conn), &conn_free);
@@ -2226,9 +2229,11 @@ static inline void disable(uint16_t handle)
 	int err;
 
 	conn = ll_conn_get(handle);
+	BT_DBG("disable ll_conn_get done");
 
 	err = ull_ticker_stop_with_mark(TICKER_ID_CONN_BASE + handle,
 					conn, &conn->lll);
+	BT_DBG("disable ull_ticker_stop_with_mark done , err = %d",err);
 	LL_ASSERT(err == 0 || err == -EALREADY);
 
 	conn->lll.handle = LLL_HANDLE_INVALID;
